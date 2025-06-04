@@ -7,20 +7,21 @@ This repository contains a simple PHP Yii2 application, along with fully automat
 
 ---
 
-## Table of Contents
+## 📑 Table of Contents
 
-- [Project Overview](#project-overview)  
-- [Setup Instructions](#setup-instructions)  
-- [GitHub Actions CI/CD Workflow](#github-actions-cicd-workflow)  
-- [Ansible Playbooks](#ansible-playbooks)  
-- [Assumptions](#assumptions)  
-- [How to Test Deployment](#how-to-test-deployment)  
-- [Repository Structure](#repository-structure)  
-- [Contact / Support](#contact--support)  
+- [📝 Project Overview](#project-overview)  
+- [🛠️ Setup Instructions](#setup-instructions)  
+- [🚀 GitHub Actions CI/CD Workflow](#github-actions-cicd-workflow)  
+- [⚙️ Ansible Playbooks](#ansible-playbooks)  
+- [🛠️ How to Run the Ansible Playbook](#ansible-playbook-run-instructions)
+- [📌 Assumptions](#assumptions)  
+- [🧪 How to Test Deployment](#how-to-test-deployment)  
+- [🗂️ Repository Structure ](#repository-structure)  
+- [📞 Contact / Support](#contact--support)  
 
 ---
 
-## Project Overview
+## 📝 Project Overview
 
 This repo hosts a minimal PHP Yii2 application intended as a demo app for showcasing deployment automation using modern DevOps practices:
 
@@ -30,7 +31,7 @@ This repo hosts a minimal PHP Yii2 application intended as a demo app for showca
 
 ---
 
-## Setup Instructions
+## 🛠️ Setup Instructions
 
 ### Prerequisites
 
@@ -152,7 +153,7 @@ The main playbook (`ansible/configure.yml`) automates the following on the EC2 i
 
 --- 
 
-## Repository Structure 
+## 🗂️ Repository Structure 
 
 ```
 sample-php-app/
@@ -173,7 +174,7 @@ sample-php-app/
 └── ...
 ```
 
-## Contact / Support
+## 📞 Contact / Support
 
 For issues or questions, please open an issue on this repo or contact the maintainer at:
 
