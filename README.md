@@ -52,7 +52,9 @@ This repo hosts a minimal PHP Yii2 application intended as a demo app for showca
 ```bash
 git clone https://github.com/<your_org>/<your_repo>.git
 cd <your_repo>
+```
 
+---
 
 ## 🚀 GitHub Actions CI/CD Workflow
 
@@ -106,3 +108,74 @@ The main playbook (`ansible/configure.yml`) automates the following on the EC2 i
 
    ```bash
    ansible-playbook -i ansible/hosts ansible/configure.yml --ask-become-pass
+
+
+## 📌 Assumptions
+
+- You have an existing **Docker Hub** repository for pushing images.
+- The **EC2 instance** is accessible via **SSH** from the GitHub Actions runner (ensure public IP and appropriate security groups).
+- **Docker Swarm** is used for managing container services on the EC2 instance.
+- The **PHP app** listens on port `8080` internally and **Nginx** proxies HTTP requests to it.
+- You have set up **GitHub Secrets** and **Environment protections** properly.
+- The Ansible playbook assumes an **Amazon Linux/CentOS** environment with the `yum` package manager.
+
+---
+
+## 🧪 How to Test Deployment
+
+1. **Push Code**
+
+   Push code changes to the `main` branch. This will trigger the GitHub Actions workflow automatically.
+
+2. **Monitor Workflow Execution**
+
+   Observe the GitHub Actions run in the Actions tab. Ensure that all steps complete successfully:
+   - Build
+   - Tag
+   - Push
+   - Deploy
+
+3. **Check Docker Swarm Service on EC2**
+
+   SSH into the EC2 instance and run:
+
+   ```bash
+   docker service ls
+   docker service ps php-app
+
+3. **Verify container running — Confirm the container is running the new image**
+
+4. **Check Nginx Reverse Proxy — Access the EC2 public IP in a browser (http://your-ec2-ip) to see the PHP Yii2 app**
+
+5. **Test service update — Push code changes, verify new Docker image version deployed and app updated**
+
+
+--- 
+
+## Repository Structure 
+
+```
+sample-php-app/
+├── ansible/
+│ ├── configure.yml # Ansible playbook to set up EC2, Docker Swarm, and Nginx
+│ ├── inventory.ini # Inventory file with EC2 host(s)
+│ └── templates/nginx.conf.j2 # Nginx config template used by Ansible
+├── basic/ # Yii2 PHP app folder
+│ ├── controllers/
+│ ├── views/
+│ ├── web/
+│ └── ...
+├── .github/
+│ └── workflows/
+│ └── deploy.yml # GitHub Actions CI/CD workflow
+├── Dockerfile # Dockerfile for building PHP app image
+├── README.md # This file
+└── ...
+```
+
+## Contact / Support
+
+For issues or questions, please open an issue on this repo or contact the maintainer at:
+
+- **GitHub**: [prnv30](https://github.com/prnv30)  
+- **Email**: [pranavbs30@gmail.com](mailto:pranavbs30@gmail.com)
