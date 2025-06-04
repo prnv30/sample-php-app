@@ -129,6 +129,7 @@ class SiteController extends Controller
     public function actionHello()
     {
         $hostname = gethostname();
+        $this->layout = false;
         return $this->render('hello', ['hostname' => $hostname]);
     }
 

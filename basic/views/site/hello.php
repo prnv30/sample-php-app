@@ -1,10 +1,12 @@
-<?php
-/** @var string $hostname */
-
-$this->title = 'Hello';
-?>
-<div class="site-hello text-center" style="margin-top: 50px;">
-    <div class="card" style="max-width: 400px; margin: 0 auto; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hello</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container text-center" style="margin-top: 50px;">
+    <div class="card" style="max-width: 400px; margin: 0 auto;">
         <div class="card-header bg-primary text-white">
             <h4 class="mb-0">Hello!</h4>
         </div>
@@ -14,3 +16,5 @@ $this->title = 'Hello';
         </div>
     </div>
 </div>
+</body>
+</html>
