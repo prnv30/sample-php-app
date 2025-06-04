@@ -8,7 +8,7 @@
 <div class="container text-center" style="margin-top: 50px;">
     <div class="card" style="max-width: 400px; margin: 0 auto;">
         <div class="card-header bg-primary text-white">
-            <h4 class="mb-0">Hello!</h4>
+            <h4 class="mb-0">Hello! Welcome to the live demo!</h4>
         </div>
         <div class="card-body">
             <p class="lead">You are visiting this page from:</p>
