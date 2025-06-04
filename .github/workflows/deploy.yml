@@ -52,12 +52,18 @@ jobs:
         shell: bash
 
       - name: Create and push new git tag
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
         run: |
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
 
           git tag ${{ steps.semver.outputs.VERSION }}
+          
+          # Use the PAT for authentication when pushing
+          git remote set-url origin https://x-access-token:${GH_PAT}@github.com/${{ github.repository }}
           git push origin ${{ steps.semver.outputs.VERSION }}
+
 
       # LOG IN TO DOCKER HUB
       - name: Log in to Docker Hub
