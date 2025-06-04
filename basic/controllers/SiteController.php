@@ -128,8 +128,8 @@ class SiteController extends Controller
 
     public function actionHello()
     {
-    $hostname = gethostname();
-    return "Hello from {$hostname}";
+        $hostname = gethostname();
+        return $this->render('hello', ['hostname' => $hostname]);
     }
 
 }

@@ -51,6 +51,14 @@ jobs:
           echo "VERSION=${new_version}" >> "$GITHUB_OUTPUT"
         shell: bash
 
+      - name: Create and push new git tag
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+
+          git tag ${{ steps.semver.outputs.VERSION }}
+          git push origin ${{ steps.semver.outputs.VERSION }}
+
       # LOG IN TO DOCKER HUB
       - name: Log in to Docker Hub
         run: |
