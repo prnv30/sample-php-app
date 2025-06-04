@@ -52,3 +52,57 @@ This repo hosts a minimal PHP Yii2 application intended as a demo app for showca
 ```bash
 git clone https://github.com/<your_org>/<your_repo>.git
 cd <your_repo>
+
+
+## 🚀 GitHub Actions CI/CD Workflow
+
+The GitHub Actions workflow is triggered on every push to the `main` branch and performs the following steps:
+
+1. **Checkout**
+   - Checks out the repository with full history.
+   - Fetches tags to determine the next semantic version bump (patch increment).
+
+2. **Versioning**
+   - Tags the repo with the new version.
+   - Pushes the new tag to the repository.
+
+3. **Docker Build and Push**
+   - Logs into Docker Hub using stored secrets.
+   - Builds the Docker image and tags it with both:
+     - The new semantic version.
+     - `latest`
+   - Pushes both tags to Docker Hub.
+
+4. **Remote Deployment via SSH**
+   - Connects to the target EC2 instance.
+   - Pulls the updated Docker image.
+   - Updates the Docker Swarm service (`php-app`) with the new image version.
+
+5. **Security**
+   - All deployments are gated through the **GitHub Environment `DEV`** to enforce manual approval or required checks before proceeding.
+
+---
+
+## ⚙️ Ansible Playbooks
+
+The main playbook (`ansible/configure.yml`) automates the following on the EC2 instance:
+
+- Installs **Docker** and **Nginx**.
+- Ensures Docker and Nginx services are started and enabled on boot.
+- Adds `ec2-user` to the Docker group for permission handling.
+- Initializes Docker Swarm (if not already done).
+- Creates a Docker Swarm service to run the PHP application.
+- Deploys an **Nginx reverse proxy** configured via `nginx.conf.j2` to route traffic to the PHP app container.
+
+---
+
+## 🛠️ How to Run the Ansible Playbook
+
+1. **Inventory Setup**
+
+   Make sure your `ansible/hosts` inventory file includes your EC2 instance under the `[ec2]` group.
+
+2. **Run the Playbook**
+
+   ```bash
+   ansible-playbook -i ansible/hosts ansible/configure.yml --ask-become-pass
