@@ -20,7 +20,7 @@ This repository contains a simple PHP Yii2 application, along with fully automat
 - [📞 Contact / Support](#contact--support)  
 
 ---
-
+<a name="project-overview"></a>
 ## 📝 Project Overview
 
 This repo hosts a minimal PHP Yii2 application intended as a demo app for showcasing deployment automation using modern DevOps practices:
@@ -31,6 +31,7 @@ This repo hosts a minimal PHP Yii2 application intended as a demo app for showca
 
 ---
 
+<a name="setup-instructions"></a>
 ## 🛠️ Setup Instructions
 
 ### Prerequisites
@@ -57,6 +58,7 @@ cd <your_repo>
 
 ---
 
+<a name="github-actions-cicd-workflow"></a>
 ## 🚀 GitHub Actions CI/CD Workflow
 
 The GitHub Actions workflow is triggered on every push to the `main` branch and performs the following steps:
@@ -86,6 +88,7 @@ The GitHub Actions workflow is triggered on every push to the `main` branch and 
 
 ---
 
+<a name="ansible-playbooks"></a>
 ## ⚙️ Ansible Playbooks
 
 The main playbook (`ansible/configure.yml`) automates the following on the EC2 instance:
@@ -99,6 +102,7 @@ The main playbook (`ansible/configure.yml`) automates the following on the EC2 i
 
 ---
 
+<a name="ansible-playbook-run-instructions"></a>
 ## 🛠️ How to Run the Ansible Playbook
 
 1. **Inventory Setup**
@@ -111,6 +115,7 @@ The main playbook (`ansible/configure.yml`) automates the following on the EC2 i
    ansible-playbook -i ansible/hosts ansible/configure.yml --ask-become-pass
 
 
+<a name="assumptions"></a>
 ## 📌 Assumptions
 
 - You have an existing **Docker Hub** repository for pushing images.
@@ -122,6 +127,7 @@ The main playbook (`ansible/configure.yml`) automates the following on the EC2 i
 
 ---
 
+<a name="how-to-test-deployment"></a>
 ## 🧪 How to Test Deployment
 
 1. **Push Code**
@@ -153,6 +159,7 @@ The main playbook (`ansible/configure.yml`) automates the following on the EC2 i
 
 --- 
 
+<a name="repository-structure"></a>
 ## 🗂️ Repository Structure 
 
 ```
@@ -174,6 +181,7 @@ sample-php-app/
 └── ...
 ```
 
+<a name="contact--support"></a>
 ## 📞 Contact / Support
 
 For issues or questions, please open an issue on this repo or contact the maintainer at:
