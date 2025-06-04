@@ -1,0 +1,70 @@
+---
+- name: Setup Sample PHP App with Nginx Reverse Proxy 
+  hosts: ec2
+  gather_facts: yes
+  become: yes
+
+  vars:
+    docker_image: datguyverbo/sample-php-app:latest # Enter the full docker image path here
+    app_service_name: php-app
+    app_service_port: 8080
+
+  tasks:
+    - name: Install required packages
+      yum:
+        name:
+          - docker 
+          - nginx 
+        state: present
+      
+    - name: Start and enable Docker 
+      systemd:
+        name: docker 
+        enabled: yes 
+        state: started
+      
+    - name: Start and enable Nginx  
+      systemd:
+        name: nginx 
+        enabled: yes 
+        state: started
+      
+    - name: Add ec2-user to docker group
+      user: 
+        name: ec2-user 
+        groups: docker 
+        append: yes 
+
+    - name: Initialize Docker Swarm
+      shell: |
+        docker swarm init || true
+      args:
+        creates: /var/lib/docker/swarm
+
+    - name: Check if service exists
+      command: docker service inspect {{ app_service_name }}
+      register: service_status
+      failed_when: false
+      changed_when: false
+
+    - name: Deploy the PHP container as a Swarm Service
+      shell: |
+        docker service create --name {{ app_service_name }} --publish {{ app_service_port }}:{{ app_service_port }} {{ docker_image }}
+      when: service_status.rc != 0
+
+    - name: Configure Nginx Reverse Proxy
+      template:
+        src: nginx.conf.j2
+        dest: /etc/nginx/nginx.conf
+        owner: root
+        group: root 
+        mode: 0644
+      notify:
+        - Reload nginx
+
+  handlers:
+    - name: Reload nginx
+      systemd:
+        name: nginx
+        state: reloaded 
+    
