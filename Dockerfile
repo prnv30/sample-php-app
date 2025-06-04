@@ -13,14 +13,14 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 # Set working directory
 WORKDIR /app
 
-# Copy project files
+# Copy all project files
 COPY . /app
 
-# Install PHP dependencies using Composer
-RUN composer install --no-interaction --prefer-dist --optimize-autoloader
+# Install PHP dependencies in the 'basic' directory
+RUN cd basic && composer install --no-interaction --prefer-dist --optimize-autoloader
 
 # Expose port
 EXPOSE 8080
 
-# Start built-in PHP server serving the Yii2 web root
+# Start PHP's built-in server serving Yii2 Basic app
 CMD ["php", "-S", "0.0.0.0:8080", "-t", "basic/web"]
