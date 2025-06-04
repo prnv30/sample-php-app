@@ -1,0 +1,102 @@
+# File: .github/workflows/deploy.yml
+name: CI / CD → Docker-Swarm Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    environment: DEV
+    env:
+      IMAGE_NAME: "${{ vars.DOCKERHUB_USERNAME }}/sample-php-app"
+
+    steps:
+
+      # CHECKOUT the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # We need full history/tags
+
+      # DETERMINE NEW SEMANTIC VERSION (bump patch)
+      - name: Determine next semantic version
+        id: semver
+        run: |
+          set -e
+
+          # Fetch all tags so that 'git describe' can see them
+          git fetch --tags
+
+          # Find the most recent tag that matches "vMAJOR.MINOR.PATCH"
+          # If no tags exist, fall back to "v0.0.0"
+          latest_tag=$(git describe --tags --match "v[0-9]*.[0-9]*.[0-9]*" --abbrev=0 2>/dev/null || echo "v0.0.0")
+          echo "🟢 Latest Git tag found: $latest_tag"
+
+          # Strip leading 'v'
+          version_core="${latest_tag#v}"
+
+          # Split into components
+          IFS='.' read -r major minor patch <<< "${version_core}"
+
+          # Bump patch by 1
+          patch=$((patch + 1))
+
+          new_version="v${major}.${minor}.${patch}"
+          echo "🟢 New semantic version → $new_version"
+
+          # Export for subsequent steps
+          echo "VERSION=${new_version}" >> "$GITHUB_OUTPUT"
+        shell: bash
+
+      # LOG IN TO DOCKER HUB
+      - name: Log in to Docker Hub
+        run: |
+          echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login --username "${{ vars.DOCKERHUB_USERNAME }}" --password-stdin
+
+      # BUILD & TAG Image with both ${{steps.semver.outputs.VERSION}} and 'latest'
+      - name: Build and tag Docker image
+        run: |
+          docker build \
+            -t "${{ env.IMAGE_NAME }}:${{ steps.semver.outputs.VERSION }}" \
+            -t "${{ env.IMAGE_NAME }}:latest" \
+            .
+
+      # PUSH both tags to Docker Hub 
+      - name: Push to Docker Hub
+        run: |
+          docker push "${{ env.IMAGE_NAME }}:${{ steps.semver.outputs.VERSION }}"
+          docker push "${{ env.IMAGE_NAME }}:latest"
+
+      # SET UP SSH AGENT to SSH into the EC2 instance
+      - name: Setup SSH agent
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      # Add EC2 host to known_hosts to avoid interactive prompt
+      - name: Add EC2 host to known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          ssh-keyscan -H "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts
+
+      # SSH into EC2: pull new image & update Docker Swarm svc
+      - name: Deploy to Docker Swarm on EC2
+        run: |
+          # Pull the newly pushed image (semantic version)
+          ssh "${{ vars.SSH_USER }}@${{ secrets.SSH_HOST }}" << 'EOF'
+            set -e
+
+            echo "Pulling image: ${{ env.IMAGE_NAME }}:${{ steps.semver.outputs.VERSION }}"
+            docker pull "${{ env.IMAGE_NAME }}:${{ steps.semver.outputs.VERSION }}"
+
+            echo "Updating Docker Swarm service 'php-app' to use image: ${{ env.IMAGE_NAME }}:${{ steps.semver.outputs.VERSION }}"
+            docker service update \
+              --image "${{ env.IMAGE_NAME }}:${{ steps.semver.outputs.VERSION }}" \
+              php-app
+
+            echo "Service 'php-app' updated successfully."
+          EOF
