@@ -17,7 +17,7 @@ WORKDIR /app
 COPY . /app
 
 # Install PHP dependencies in the 'basic' directory
-RUN cd basic && composer install --no-interaction --prefer-dist --optimize-autoloader
+RUN cd basic && composer install --no-interaction --prefer-dist --optimize-autoloader --ignore-platform-reqs
 
 # Expose port
 EXPOSE 8080
