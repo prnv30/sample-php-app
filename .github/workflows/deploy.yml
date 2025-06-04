@@ -19,7 +19,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0  # We need full history/tags
+          fetch-depth: 0
+          persist-credentials: false
 
       # DETERMINE NEW SEMANTIC VERSION (bump patch)
       - name: Determine next semantic version
